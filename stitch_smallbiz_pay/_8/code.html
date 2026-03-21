@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="light" dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary": "#505f76",
+              "on-primary-fixed": "#00174b",
+              "surface": "#f7f9fb",
+              "secondary-fixed-dim": "#b7c8e1",
+              "on-primary-fixed-variant": "#003ea8",
+              "on-primary-container": "#eeefff",
+              "tertiary": "#006229",
+              "inverse-surface": "#2d3133",
+              "inverse-primary": "#b4c5ff",
+              "surface-dim": "#d8dadc",
+              "on-tertiary-fixed-variant": "#005321",
+              "outline": "#737686",
+              "background": "#f7f9fb",
+              "primary-fixed-dim": "#b4c5ff",
+              "on-secondary-container": "#54647a",
+              "surface-variant": "#e0e3e5",
+              "surface-container-high": "#e6e8ea",
+              "surface-bright": "#f7f9fb",
+              "on-surface-variant": "#434655",
+              "on-secondary-fixed-variant": "#38485d",
+              "secondary-fixed": "#d3e4fe",
+              "on-secondary": "#ffffff",
+              "outline-variant": "#c3c6d7",
+              "on-background": "#191c1e",
+              "error": "#ba1a1a",
+              "surface-container-highest": "#e0e3e5",
+              "on-error-container": "#93000a",
+              "surface-container-lowest": "#ffffff",
+              "surface-container": "#eceef0",
+              "on-secondary-fixed": "#0b1c30",
+              "surface-container-low": "#f2f4f6",
+              "tertiary-fixed-dim": "#4ae176",
+              "secondary-container": "#d0e1fb",
+              "on-tertiary-container": "#c1ffc5",
+              "on-surface": "#191c1e",
+              "on-error": "#ffffff",
+              "primary-container": "#2563eb",
+              "on-tertiary": "#ffffff",
+              "error-container": "#ffdad6",
+              "primary-fixed": "#dbe1ff",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed": "#002109",
+              "tertiary-container": "#007e37",
+              "surface-tint": "#0053db",
+              "inverse-on-surface": "#eff1f3",
+              "tertiary-fixed": "#6bff8f",
+              "primary": "#004ac6"
+            },
+            fontFamily: {
+              "headline": ["Heebo", "Inter"],
+              "body": ["Heebo", "Inter"],
+              "label": ["Heebo", "Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Heebo', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-nav {
+            backdrop-filter: blur(12px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        .signature-gradient {
+            background: linear-gradient(135deg, #004ac6 0%, #2563eb 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="h-screen w-64 fixed right-0 top-0 border-l-0 rtl flex flex-col p-4 gap-2 bg-slate-100 z-50">
+<div class="mb-8 px-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg signature-gradient flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined">corporate_fare</span>
+</div>
+<div>
+<h2 class="text-xl font-bold text-blue-800 leading-tight">ניהול הון אנושי</h2>
+<p class="text-xs text-on-surface-variant opacity-70">מערכת ניהול מרכזית</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>לוח בקרה</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-white text-blue-700 rounded-lg shadow-sm font-medium border-r-4 border-blue-700" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span>עובדים</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">work</span>
+<span>סוגי משרות</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">event_note</span>
+<span>יומני עבודה</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>תשלומים</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200/50 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>הגדרות</span>
+</a>
+</nav>
+<div class="mt-auto p-4 bg-surface-container-low rounded-xl">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="פרופיל מנהל המערכת" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLn3TLCGG3RNDnhW7QCEyMoj1zV1YQGSIOerL06kemkcwdEr-Wlue7xK6BqFoSixLIwc7d97Js7tzV9v5fLZW0pY2sXgRTR92h2o6pqdHRaVk64MdzDEBJfy6-PPL_M0XxnuZqE80W0EWQ3Dp7TfJHRPrT2ie-mORhvfqKEJcV6sLwFOVEuYTQZPVJfdVwuyj5hCTXmzWiRTt-Ajr5_N_isvCOqbtLGh4Eh02lNPu0Yz7wlWtiK3-F_foGogpc9CstTBscfeP6u0O7"/>
+<div class="overflow-hidden">
+<p class="text-sm font-bold truncate">אבי כהן</p>
+<p class="text-xs text-on-surface-variant truncate">מנהל מערכת</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopNavBar Component -->
+<header class="fixed top-0 left-0 right-64 h-16 z-40 flex flex-row-reverse justify-between items-center px-8 bg-white/80 backdrop-blur-md border-b border-slate-100">
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full ring-2 ring-white"></span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">help_outline</span>
+<div class="h-8 w-[1px] bg-slate-200"></div>
+<div class="flex items-center gap-3">
+<span class="text-sm font-medium">שלום, אבי</span>
+<img class="w-8 h-8 rounded-full border border-slate-200" data-alt="תמונת משתמש מחובר" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2-TJeo9PMPn4l7Tw_dpn74-edYrHT5kv1tBBSuEp8B-kNCPIcUEYXQqXLQZAAGZhSZmTaWCTVnVQyo4bDOEMwpRiYiTZTv9apDrEevku00QLGBcX4LekO4MdB9BoLsh1ULlTSJb6xJz1g3dL2ODugNC-WbrVaXYjvKyHtGRJoNBj7ANXx_n1cUk2Mj0BAgcZLbNmXFSpnHf4sKfXM-4Jyq9XlSk1ltVQwjsFoHw4AhBo7_w-2aZG9mFjAmBiG8K_53C4OVsxTb0z0"/>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<h1 class="text-lg font-black bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">HumanResource AI</h1>
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="pr-10 pl-4 py-2 bg-slate-50 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-500/20 w-64" placeholder="חיפוש עובד או פעולה..." type="text"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="mr-64 pt-16 p-8 min-h-screen">
+<!-- Page Header & Action -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<nav class="flex gap-2 text-sm text-on-surface-variant mb-2">
+<span>עובדים</span>
+<span>/</span>
+<span class="text-primary font-medium">כרטיס עובד אישי</span>
+</nav>
+<h2 class="text-4xl font-bold tracking-tight text-on-surface">ישראל ישראלי</h2>
+</div>
+<button class="signature-gradient text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-lg shadow-blue-500/20 hover:scale-[1.02] transition-transform">
+<span class="material-symbols-outlined">download</span>
+<span class="font-bold">הורדת דוח ריכוז (PDF)</span>
+</button>
+</div>
+<!-- Bento Layout: Profile Overview -->
+<div class="grid grid-cols-12 gap-6 mb-8">
+<!-- Profile Card -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col items-center text-center">
+<div class="relative mb-4">
+<img class="w-32 h-32 rounded-3xl object-cover shadow-xl border-4 border-white" data-alt="תמונת פרופיל של העובד" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQERGt50lIN3XXLif-ILinWu0mF_PCRuoYx_47kqq7uniSnLyz-m9ziEdiV0pGaB26mzRVwggSxwMyF-wJ0b52BsixYtWh0x-8FIKrdEn2wiyIVp_sAyHdpBfsXqFo27txP5jzS9GRnawnc3xLt2LqOPY5wkSTz0Ffo8w3krb8upHJuBMhsRoCBIJZjSIyKzjorTu21RI2iroDWUQP3f_JeM_WeUOQFTcLueg2rpb5RnGNLa9T2iFcfH3UYfRTr-8Jv-CIeyeIgx8N"/>
+<span class="absolute bottom-1 right-1 w-6 h-6 bg-tertiary-fixed border-4 border-white rounded-full"></span>
+</div>
+<h3 class="text-xl font-bold mb-1">ישראל ישראלי</h3>
+<p class="text-on-surface-variant text-sm mb-4">מפתח Full-Stack בכיר</p>
+<div class="flex gap-2 w-full">
+<div class="flex-1 bg-surface-container-low p-3 rounded-lg">
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">תאריך הצטרפות</p>
+<p class="font-medium">12/05/2021</p>
+</div>
+<div class="flex-1 bg-surface-container-low p-3 rounded-lg">
+<p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">מספר עובד</p>
+<p class="font-medium">#8842</p>
+</div>
+</div>
+<div class="w-full mt-4 flex flex-col gap-2">
+<div class="flex items-center gap-3 p-3 text-right">
+<span class="material-symbols-outlined text-primary">mail</span>
+<span class="text-sm">israel.i@company.com</span>
+</div>
+<div class="flex items-center gap-3 p-3 text-right">
+<span class="material-symbols-outlined text-primary">call</span>
+<span class="text-sm">052-1234567</span>
+</div>
+</div>
+<button class="w-full mt-6 signature-gradient text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 shadow-md hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+<span class="font-bold text-sm">הורדת דוח ריכוז PDF</span>
+</button></div>
+<!-- Balance & Analytics -->
+<div class="col-span-12 lg:col-span-8 grid grid-cols-2 gap-6">
+<!-- Current Balance Card -->
+<div class="col-span-2 md:col-span-1 bg-primary text-on-primary p-6 rounded-xl shadow-lg relative overflow-hidden">
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-4">
+<span class="material-symbols-outlined text-3xl opacity-80">account_balance_wallet</span>
+<span class="bg-white/20 px-3 py-1 rounded-full text-xs font-bold">יתרה נוכחית</span>
+</div>
+<h4 class="text-4xl font-black mb-1">₪ 14,250.00</h4>
+<p class="text-sm opacity-80 font-medium">זמין למשיכה בסוף החודש</p>
+</div>
+<!-- Abstract Background Graphic -->
+<div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+</div>
+<!-- Monthly Earnings Card -->
+<div class="col-span-2 md:col-span-1 bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-slate-100/50">
+<div class="flex justify-between items-center mb-6">
+<h4 class="font-bold text-on-surface-variant">סיכום חודשי (נובמבר)</h4>
+<span class="text-tertiary font-bold text-sm">+8.2%</span>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-end">
+<div class="w-4 bg-primary/20 h-12 rounded-t-sm"></div>
+<div class="w-4 bg-primary/20 h-16 rounded-t-sm"></div>
+<div class="w-4 bg-primary/20 h-24 rounded-t-sm"></div>
+<div class="w-4 bg-primary/20 h-20 rounded-t-sm"></div>
+<div class="w-4 bg-primary/20 h-28 rounded-t-sm"></div>
+<div class="w-4 bg-primary signature-gradient h-36 rounded-t-sm"></div>
+</div>
+<div class="flex justify-between text-[10px] text-on-surface-variant font-bold">
+<span>יוני</span>
+<span>יולי</span>
+<span>אוג׳</span>
+<span>ספט׳</span>
+<span>אוק׳</span>
+<span>נוב׳</span>
+</div>
+</div>
+</div>
+<!-- Detailed Stats -->
+<div class="col-span-2 bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-slate-100/50 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="border-l border-slate-100 pl-4">
+<p class="text-xs font-bold text-on-surface-variant mb-1">סך הכל שעות (חודש נוכחי)</p>
+<p class="text-2xl font-bold">164.5</p>
+<div class="w-full bg-surface-container h-1 mt-2 rounded-full overflow-hidden">
+<div class="bg-primary w-3/4 h-full"></div>
+</div>
+</div>
+<div class="border-l border-slate-100 pl-4">
+<p class="text-xs font-bold text-on-surface-variant mb-1">פרויקטים פעילים</p>
+<p class="text-2xl font-bold">4</p>
+<div class="flex -space-x-2 space-x-reverse mt-2">
+<div class="w-6 h-6 rounded-full bg-blue-100 border-2 border-white text-[10px] flex items-center justify-center font-bold">A</div>
+<div class="w-6 h-6 rounded-full bg-green-100 border-2 border-white text-[10px] flex items-center justify-center font-bold">B</div>
+<div class="w-6 h-6 rounded-full bg-purple-100 border-2 border-white text-[10px] flex items-center justify-center font-bold">C</div>
+</div>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface-variant mb-1">דירוג ביצועים</p>
+<div class="flex items-center gap-1 mt-1 text-yellow-500">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined">star</span>
+<span class="text-on-surface font-bold text-lg mr-2">4.8</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Tabs Section -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm border border-slate-100/50 overflow-hidden">
+<div class="flex border-b border-slate-100">
+<button class="px-8 py-5 font-bold text-primary border-b-2 border-primary bg-primary/5 transition-all">היסטוריית עבודה</button>
+<button class="px-8 py-5 font-bold text-on-surface-variant hover:text-primary transition-all">היסטוריית תשלומים</button>
+</div>
+<div class="p-6">
+<!-- Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant text-xs font-bold uppercase tracking-widest">
+<th class="p-4 rounded-r-lg">תאריך</th>
+<th class="p-4">פרויקט</th>
+<th class="p-4">תיאור משימה</th>
+<th class="p-4">שעות</th>
+<th class="p-4">תעריף</th>
+<th class="p-4 rounded-l-lg text-left">סה״כ לתשלום</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50">
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="p-4 text-sm font-medium">14/11/2023</td>
+<td class="p-4">
+<span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-[10px] font-bold">מערכת CRM</span>
+</td>
+<td class="p-4 text-sm text-on-surface-variant">פיתוח API עבור אינטגרציית וואטסאפ</td>
+<td class="p-4 text-sm font-bold">8.5</td>
+<td class="p-4 text-sm">₪ 120</td>
+<td class="p-4 text-sm font-black text-left">₪ 1,020.00</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="p-4 text-sm font-medium">13/11/2023</td>
+<td class="p-4">
+<span class="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-[10px] font-bold">אפליקציית מובייל</span>
+</td>
+<td class="p-4 text-sm text-on-surface-variant">תיקון באגים במסך הרשמה וחיבור OAuth</td>
+<td class="p-4 text-sm font-bold">6.0</td>
+<td class="p-4 text-sm">₪ 120</td>
+<td class="p-4 text-sm font-black text-left">₪ 720.00</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="p-4 text-sm font-medium">12/11/2023</td>
+<td class="p-4">
+<span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-[10px] font-bold">מערכת CRM</span>
+</td>
+<td class="p-4 text-sm text-on-surface-variant">אופטימיזציה לשאילתות בסיס נתונים</td>
+<td class="p-4 text-sm font-bold">9.2</td>
+<td class="p-4 text-sm">₪ 120</td>
+<td class="p-4 text-sm font-black text-left">₪ 1,104.00</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="p-4 text-sm font-medium">11/11/2023</td>
+<td class="p-4">
+<span class="bg-green-50 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold">תחזוקה שוטפת</span>
+</td>
+<td class="p-4 text-sm text-on-surface-variant">עדכוני אבטחה לשרתי הייצור</td>
+<td class="p-4 text-sm font-bold">4.0</td>
+<td class="p-4 text-sm">₪ 150</td>
+<td class="p-4 text-sm font-black text-left">₪ 600.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Concept -->
+<div class="mt-6 flex justify-between items-center text-sm">
+<p class="text-on-surface-variant">מציג 1-4 מתוך 24 רשומות</p>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-slate-200 text-slate-400 cursor-not-allowed">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-white font-bold">1</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-slate-200 hover:bg-slate-50 transition-colors">2</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-slate-200 hover:bg-slate-50 transition-colors">3</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-slate-200 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Analytics Chart Placeholder -->
+<div class="mt-8 bg-surface-container-lowest p-8 rounded-2xl shadow-sm border border-slate-100/50">
+<div class="flex justify-between items-center mb-10">
+<div>
+<h3 class="text-xl font-bold">גרף רווחים מול תשלומים</h3>
+<p class="text-on-surface-variant text-sm">ניתוח שנתי של הכנסות העובד ועלויות המעסיק</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="text-xs font-bold">רווחים</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary-fixed-dim"></span>
+<span class="text-xs font-bold">תשלומים בפועל</span>
+</div>
+</div>
+</div>
+<div class="h-64 flex items-end justify-between px-4 gap-6 relative">
+<!-- Grid Lines -->
+<div class="absolute inset-x-0 top-0 h-[1px] bg-slate-100"></div>
+<div class="absolute inset-x-0 top-1/4 h-[1px] bg-slate-100"></div>
+<div class="absolute inset-x-0 top-2/4 h-[1px] bg-slate-100"></div>
+<div class="absolute inset-x-0 top-3/4 h-[1px] bg-slate-100"></div>
+<!-- Bars (January to June as Example) -->
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group relative h-full">
+<div class="w-full max-w-[40px] bg-secondary-fixed-dim h-1/2 rounded-t-lg transition-all group-hover:opacity-80"></div>
+<div class="w-full max-w-[40px] signature-gradient h-[60%] rounded-t-lg transition-all group-hover:scale-y-105"></div>
+<span class="mt-4 text-[10px] font-bold text-on-surface-variant">ינואר</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group relative h-full">
+<div class="w-full max-w-[40px] bg-secondary-fixed-dim h-2/3 rounded-t-lg transition-all group-hover:opacity-80"></div>
+<div class="w-full max-w-[40px] signature-gradient h-[75%] rounded-t-lg transition-all group-hover:scale-y-105"></div>
+<span class="mt-4 text-[10px] font-bold text-on-surface-variant">פברואר</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group relative h-full">
+<div class="w-full max-w-[40px] bg-secondary-fixed-dim h-[45%] rounded-t-lg transition-all group-hover:opacity-80"></div>
+<div class="w-full max-w-[40px] signature-gradient h-[55%] rounded-t-lg transition-all group-hover:scale-y-105"></div>
+<span class="mt-4 text-[10px] font-bold text-on-surface-variant">מרץ</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group relative h-full">
+<div class="w-full max-w-[40px] bg-secondary-fixed-dim h-[80%] rounded-t-lg transition-all group-hover:opacity-80"></div>
+<div class="w-full max-w-[40px] signature-gradient h-[90%] rounded-t-lg transition-all group-hover:scale-y-105"></div>
+<span class="mt-4 text-[10px] font-bold text-on-surface-variant">אפריל</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group relative h-full">
+<div class="w-full max-w-[40px] bg-secondary-fixed-dim h-[65%] rounded-t-lg transition-all group-hover:opacity-80"></div>
+<div class="w-full max-w-[40px] signature-gradient h-[70%] rounded-t-lg transition-all group-hover:scale-y-105"></div>
+<span class="mt-4 text-[10px] font-bold text-on-surface-variant">מאי</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group relative h-full">
+<div class="w-full max-w-[40px] bg-secondary-fixed-dim h-[75%] rounded-t-lg transition-all group-hover:opacity-80"></div>
+<div class="w-full max-w-[40px] signature-gradient h-[85%] rounded-t-lg transition-all group-hover:scale-y-105"></div>
+<span class="mt-4 text-[10px] font-bold text-on-surface-variant">יוני</span>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="he"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Heebo', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .signature-gradient {
+            background: linear-gradient(135deg, #004ac6 0%, #2563eb 100%);
+        }
+        /* Custom scrollbar for refined UI */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e0e3e5; border-radius: 10px; }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed": "#002109",
+              "background": "#f7f9fb",
+              "on-primary-fixed": "#00174b",
+              "surface-dim": "#d8dadc",
+              "on-primary-container": "#eeefff",
+              "tertiary-fixed-dim": "#4ae176",
+              "surface-tint": "#0053db",
+              "on-tertiary": "#ffffff",
+              "error-container": "#ffdad6",
+              "secondary-fixed-dim": "#b7c8e1",
+              "surface-container-highest": "#e0e3e5",
+              "secondary-fixed": "#d3e4fe",
+              "outline": "#737686",
+              "surface-bright": "#f7f9fb",
+              "tertiary": "#006229",
+              "primary-fixed-dim": "#b4c5ff",
+              "on-primary": "#ffffff",
+              "on-secondary-fixed": "#0b1c30",
+              "error": "#ba1a1a",
+              "primary": "#004ac6",
+              "on-secondary-fixed-variant": "#38485d",
+              "surface-variant": "#e0e3e5",
+              "surface": "#f7f9fb",
+              "on-surface": "#191c1e",
+              "tertiary-fixed": "#6bff8f",
+              "secondary": "#505f76",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-container": "#54647a",
+              "inverse-primary": "#b4c5ff",
+              "surface-container-low": "#f2f4f6",
+              "on-tertiary-fixed-variant": "#005321",
+              "on-surface-variant": "#434655",
+              "tertiary-container": "#007e37",
+              "secondary-container": "#d0e1fb",
+              "outline-variant": "#c3c6d7",
+              "on-error": "#ffffff",
+              "on-error-container": "#93000a",
+              "surface-container-high": "#e6e8ea",
+              "surface-container": "#eceef0",
+              "primary-fixed": "#dbe1ff",
+              "on-background": "#191c1e",
+              "primary-container": "#2563eb",
+              "inverse-on-surface": "#eff1f3",
+              "on-primary-fixed-variant": "#003ea8",
+              "inverse-surface": "#2d3133",
+              "on-tertiary-container": "#c1ffc5",
+              "on-secondary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Heebo"],
+              "body": ["Heebo"],
+              "label": ["Heebo"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface text-on-surface antialiased overflow-hidden">
+<!-- TopNavBar -->
+<header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md docked full-width top-0 z-40 border-b border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none fixed right-0 left-0">
+<div class="flex flex-row-reverse justify-between items-center w-full px-6 py-3">
+<div class="flex flex-row-reverse items-center gap-6">
+<span class="text-xl font-bold text-blue-800 dark:text-blue-200 font-heebo tracking-tight">ניהול עובדים</span>
+<div class="hidden md:flex flex-row-reverse items-center gap-6">
+<button class="text-blue-700 dark:text-blue-300 font-semibold transition-colors active:scale-95 duration-150">ראשי</button>
+<button class="text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:scale-95 duration-150 rounded-lg px-2 py-1">דיווחים</button>
+</div>
+</div>
+<div class="flex flex-row-reverse items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="bg-surface-container-low border-none rounded-full pr-10 pl-4 py-2 text-sm focus:ring-2 focus:ring-primary w-64" placeholder="חיפוש מהיר..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border-2 border-primary/20">
+<img class="w-full h-full object-cover" data-alt="User profile avatar of a male professional" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgvuR8AOAv1KqqaD6uc0XWCdWxVmQESAlvcBAyYXZPoURXAUcffe9dZPS_mHpzgUlfZEi-P2bF_p9BCktoxUFCKsjWnU8EN0E5t2BkGK_vn4DLPVt57bMPU7DCxIl4JwT3I5qSszA9JtsDqAtmO3RAz2jRW4UPrGjcjw3FpP8t3nn6Bfz6JA63MoFSCDHF2Y8lspq8awjuUmFNH2FTgYmQYKo0owgVSiwigXkBFacTrJRwHo1-js-xazxVi-lv7bEggXsjCK6m7KR0"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class="flex h-screen pt-[60px]">
+<!-- SideNavBar -->
+<aside class="bg-slate-50 dark:bg-slate-950 h-screen w-64 fixed right-0 top-0 border-l no-line tonal layering surface-container-high shadow-xl dark:shadow-2xl shadow-slate-200/50 z-50 overflow-hidden hidden md:block">
+<div class="flex flex-col h-full overflow-y-auto">
+<!-- Sidebar Header -->
+<div class="p-6 mb-4 flex flex-col items-center text-center">
+<div class="w-16 h-16 signature-gradient rounded-xl flex items-center justify-center mb-3 shadow-lg shadow-blue-200">
+<span class="material-symbols-outlined text-white text-3xl" style="font-variation-settings: 'FILL' 1;">corporate_fare</span>
+</div>
+<h2 class="text-lg font-black text-slate-900 dark:text-white font-heebo">מערכת ניהול</h2>
+<p class="text-xs text-slate-500 font-medium">גרסה 2.0</p>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 px-4 space-y-1 font-heebo text-sm font-medium text-right">
+<a class="flex flex-row-reverse items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-blue-600 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>לוח בקרה</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg px-4 py-3 border-r-4 border-blue-600 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span>עובדים</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-blue-600 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">work</span>
+<span>סוגי משרות</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-blue-600 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+<span>יומני עבודה</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-blue-600 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span>תשלומים</span>
+</a>
+<a class="flex flex-row-reverse items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-blue-600 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>הגדרות</span>
+</a>
+</nav>
+<!-- Sidebar Footer CTA -->
+<div class="p-4 mt-auto">
+<button class="w-full signature-gradient text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 shadow-md hover:shadow-lg active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">person_add</span>
+<span>הוסף עובד חדש</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 mr-0 md:mr-64 overflow-y-auto bg-surface p-6 md:p-10">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row-reverse md:items-end justify-between gap-6 mb-10">
+<div>
+<nav class="flex flex-row-reverse gap-2 text-xs text-on-surface-variant mb-2">
+<span>ראשי</span>
+<span>/</span>
+<span class="text-primary font-semibold">ניהול עובדים</span>
+</nav>
+<h1 class="text-4xl font-extrabold tracking-tight text-on-surface font-heebo">ניהול עובדים</h1>
+<p class="text-on-surface-variant mt-2 max-w-lg">צפה ונהל את כל עובדי החברה, ערוך פרטים אישיים ונהל סטטוס העסקה במקום אחד.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2.5 signature-gradient text-white font-bold rounded-lg shadow-lg shadow-blue-100 flex items-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add</span>
+<span>הוסף עובד חדש</span>
+</button>
+<button class="px-6 py-2.5 bg-surface-container-highest text-on-surface-variant font-bold rounded-lg flex items-center gap-2 hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+<span>הפקת דוח חודשי</span>
+</button><button class="px-6 py-2.5 bg-surface-container-highest text-on-surface-variant font-bold rounded-lg flex items-center gap-2 hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined">download</span>
+<span>ייצוא דוח</span>
+</button>
+</div>
+</div>
+<!-- Dashboard Statistics Bento Grid (Editorial Style) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-transparent hover:border-primary/20 transition-all">
+<div class="flex flex-row-reverse justify-between items-start mb-4">
+<div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
+<span class="material-symbols-outlined">group</span>
+</div>
+<span class="text-xs font-bold text-tertiary px-2 py-1 bg-tertiary-fixed rounded-full">+12%</span>
+</div>
+<p class="text-on-surface-variant text-sm font-medium">סה"כ עובדים</p>
+<h3 class="text-3xl font-black mt-1">1,284</h3>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-transparent hover:border-primary/20 transition-all">
+<div class="flex flex-row-reverse justify-between items-start mb-4">
+<div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+<span class="material-symbols-outlined">how_to_reg</span>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm font-medium">עובדים פעילים</p>
+<h3 class="text-3xl font-black mt-1">1,150</h3>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-transparent hover:border-primary/20 transition-all">
+<div class="flex flex-row-reverse justify-between items-start mb-4">
+<div class="p-2 bg-amber-50 text-amber-600 rounded-lg">
+<span class="material-symbols-outlined">person_off</span>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm font-medium">לא פעילים</p>
+<h3 class="text-3xl font-black mt-1">134</h3>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-transparent hover:border-primary/20 transition-all">
+<div class="flex flex-row-reverse justify-between items-start mb-4">
+<div class="p-2 bg-purple-50 text-purple-600 rounded-lg">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm font-medium">גיוסים החודש</p>
+<h3 class="text-3xl font-black mt-1">28</h3>
+</div>
+</div>
+<!-- Main Data Section -->
+<div class="bg-surface-container-low rounded-2xl p-6 shadow-sm">
+<!-- Filters and Search -->
+<div class="flex flex-col md:flex-row-reverse items-center justify-between gap-4 mb-8">
+<div class="flex flex-row-reverse gap-4 w-full md:w-auto">
+<div class="relative flex-1 md:w-80">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant/30 rounded-lg pr-10 pl-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="חיפוש לפי שם או ת.ז..." type="text"/>
+</div>
+<div class="relative">
+<select class="appearance-none bg-surface-container-lowest border border-outline-variant/30 rounded-lg pr-4 pl-10 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all min-w-[140px] text-right">
+<option>סטטוס: הכל</option>
+<option>פעיל</option>
+<option>לא פעיל</option>
+</select>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">filter_list</span>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant text-sm font-medium hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span>מיון לפי תאריך גיוס</span>
+</button>
+</div>
+</div>
+<!-- Data Table (Clean Editorial style) -->
+<div class="overflow-x-auto">
+<table class="w-full text-right border-separate border-spacing-y-3">
+<thead>
+<tr class="text-on-surface-variant text-sm font-bold bg-surface-container-high/50">
+<th class="py-4 px-6 rounded-r-xl">שם עובד</th>
+<th class="py-4 px-6">תפקיד</th>
+<th class="py-4 px-6 text-center">סטטוס</th>
+<th class="py-4 px-6">הערות</th>
+<th class="py-4 px-6 rounded-l-xl text-left">פעולות</th>
+</tr>
+</thead>
+<tbody>
+<!-- Row 1 -->
+<tr class="bg-surface-container-lowest hover:bg-slate-50 transition-colors group">
+<td class="py-4 px-6 rounded-r-xl border-y border-r border-transparent group-hover:border-primary/10">
+<div class="flex flex-row-reverse items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold">יי</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">ישראל ישראלי</span>
+<span class="text-xs text-on-surface-variant">israel@company.co.il</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 border-y border-transparent group-hover:border-primary/10">מנהל צוות פיתוח</td>
+<td class="py-4 px-6 text-center border-y border-transparent group-hover:border-primary/10">
+<span class="px-3 py-1 rounded-full text-xs font-bold bg-tertiary-fixed text-on-tertiary-fixed">פעיל</span>
+</td>
+<td class="py-4 px-6 border-y border-transparent group-hover:border-primary/10">
+<p class="text-sm text-on-surface-variant max-w-xs truncate">עובד מצטיין רבעון א'</p>
+</td>
+<td class="py-4 px-6 rounded-l-xl border-y border-l border-transparent group-hover:border-primary/10 text-left">
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors hover:bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-error transition-colors hover:bg-error/10 rounded-lg">
+<span class="material-symbols-outlined">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="bg-surface-container-lowest hover:bg-slate-50 transition-colors group">
+<td class="py-4 px-6 rounded-r-xl border-y border-r border-transparent group-hover:border-primary/10">
+<div class="flex flex-row-reverse items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold">של</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">שרה לוי</span>
+<span class="text-xs text-on-surface-variant">sara.l@company.co.il</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 border-y border-transparent group-hover:border-primary/10">מעצבת מוצר בכירה</td>
+<td class="py-4 px-6 text-center border-y border-transparent group-hover:border-primary/10">
+<span class="px-3 py-1 rounded-full text-xs font-bold bg-tertiary-fixed text-on-tertiary-fixed">פעיל</span>
+</td>
+<td class="py-4 px-6 border-y border-transparent group-hover:border-primary/10">
+<p class="text-sm text-on-surface-variant max-w-xs truncate">-</p>
+</td>
+<td class="py-4 px-6 rounded-l-xl border-y border-l border-transparent group-hover:border-primary/10 text-left">
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors hover:bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-error transition-colors hover:bg-error/10 rounded-lg">
+<span class="material-symbols-outlined">archive</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="bg-surface-container-lowest hover:bg-slate-50 transition-colors group">
+<td class="py-4 px-6 rounded-r-xl border-y border-r border-transparent group-hover:border-primary/10">
+<div class="flex flex-row-reverse items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 font-bold">אכ</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">אבי כהן</span>
+<span class="text-xs text-on-surface-variant">avi.c@company.co.il</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 border-y border-transparent group-hover:border-primary/10">מנהל חשבונות</td>
+<td class="py-4 px-6 text-center border-y border-transparent group-hover:border-primary/10">
+<span class="px-3 py-1 rounded-full text-xs font-bold bg-error-container text-on-error-container">לא פעיל</span>
+</td>
+<td class="py-4 px-6 border-y border-transparent group-hover:border-primary/10">
+<p class="text-sm text-on-surface-variant max-w-xs truncate">בתהליך עזיבה מרצון</p>
+</td>
+<td class="py-4 px-6 rounded-l-xl border-y border-l border-transparent group-hover:border-primary/10 text-left">
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors hover:bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-error transition-colors hover:bg-error/10 rounded-lg">
+<span class="material-symbols-outlined">restore_from_trash</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="bg-surface-container-lowest hover:bg-slate-50 transition-colors group">
+<td class="py-4 px-6 rounded-r-xl border-y border-r border-transparent group-hover:border-primary/10">
+<div class="flex flex-row-reverse items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold">מר</div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface">מיכל רוזן</span>
+<span class="text-xs text-on-surface-variant">michal.r@company.co.il</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6 border-y border-transparent group-hover:border-primary/10">מנהלת משאבי אנוש</td>
+<td class="py-4 px-6 text-center border-y border-transparent group-hover:border-primary/10">
+<span class="px-3 py-1 rounded-full text-xs font-bold bg-tertiary-fixed text-on-tertiary-fixed">פעיל</span>
+</td>
+<td class="py-4 px-6 border-y border-transparent group-hover:border-primary/10">
+<p class="text-sm text-on-surface-variant max-w-xs truncate">משרת הורה</p>
+</td>
+<td class="py-4 px-6 rounded-l-xl border-y border-l border-transparent group-hover:border-primary/10 text-left">
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors hover:bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-error transition-colors hover:bg-error/10 rounded-lg">
+<span class="material-symbols-outlined">archive</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="mt-8 flex flex-row-reverse items-center justify-between border-t border-outline-variant/20 pt-6">
+<p class="text-sm text-on-surface-variant">מציג 1-10 מתוך 1,284 עובדים</p>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-outline-variant/30 text-on-surface-variant hover:bg-white">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-primary text-white font-bold">1</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-outline-variant/30 text-on-surface-variant hover:bg-white">2</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-outline-variant/30 text-on-surface-variant hover:bg-white">3</button>
+<span class="text-on-surface-variant px-2">...</span>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center border border-outline-variant/30 text-on-surface-variant hover:bg-white">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile Bottom Navigation (Responsive Pivot) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 flex justify-around py-3 z-50">
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px]">ראשי</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-[10px]">עובדים</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px]">תשלומים</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px]">הגדרות</span>
+</button>
+</nav>
+<!-- Floating Action Button (FAB) - Suppression logic: Visible on dashboard/main list -->
+<button class="md:hidden fixed bottom-20 left-6 signature-gradient w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-white z-40">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</body></html>
