@@ -1,59 +1,43 @@
-# אפיון מערכת לניהול העסקת עובדים - SmallBiz Pay
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="refresh" content="0; url=./stitch_smallbiz_pay/_3/code.html" />
+    <title>SmallBiz Pay</title>
+    <style>
+      body {
+        font-family: Heebo, Arial, sans-serif;
+        background: #f7f9fb;
+        color: #191c1e;
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+      }
 
-## 1. מבוא
-מערכת מקיפה לניהול עובדים, עבודות, תעריפים ותשלומים עבור עסקים קטנים. המערכת שמה דגש על חישוב אוטומטי של שכר על בסיס היסטוריית תעריפים ומעקב מדויק אחר יתרות.
+      .card {
+        background: #ffffff;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 12px 32px -4px rgba(25, 28, 30, 0.08);
+        max-width: 560px;
+        text-align: center;
+      }
 
-## 2. מודל נתונים (Database Schema)
-
-### עובדים (Employees)
-- `id`: UUID (מפתח ראשי)
-- `name`: String (שם מלא)
-- `status`: Enum (פעיל, לא פעיל)
-- `notes`: Text (הערות)
-- `created_at`: Timestamp
-
-### סוגי עבודה (JobTypes)
-- `id`: UUID (מפתח ראשי)
-- `name`: String (שם העבודה)
-- `payment_method`: Enum (לפי כמות, לפי שעות, תשלום קבוע)
-- `status`: Enum (פעיל, לא פעיל)
-- `notes`: Text
-- `created_at`: Timestamp
-
-### תעריפים (Rates)
-- `id`: UUID
-- `job_type_id`: UUID (מפתח זר ל-JobTypes)
-- `amount`: Decimal (סכום התעריף)
-- `start_date`: Date (תאריך תחילה)
-- `end_date`: Date (תאריך סיום - אופציונלי)
-
-### רישומי עבודה (WorkLogs)
-- `id`: UUID
-- `date`: Date
-- `employee_id`: UUID (מפתח זר ל-Employees)
-- `job_type_id`: UUID (מפתח זר ל-JobTypes)
-- `quantity`: Decimal (לשימוש בשיטת "כמות")
-- `hours_minutes`: String (פורמט HH:mm לשימוש בשיטת "שעות")
-- `decimal_hours`: Decimal (חישוב אוטומטי לצורך שכר)
-- `applied_rate`: Decimal (התעריף שנשמר בזמן הרישום)
-- `total_amount`: Decimal (חישוב סופי: rate * quantity/hours)
-- `status`: Enum (פעיל, מבוטל)
-- `notes`: Text
-
-### תשלומים (Payments)
-- `id`: UUID
-- `date`: Date
-- `employee_id`: UUID (מפתח זר ל-Employees)
-- `amount`: Decimal (סכום התשלום)
-- `notes`: Text
-
-## 3. לוגיקה עסקית מרכזית
-1. **איתור תעריף תקף:** בעת יצירת רישום עבודה בתאריך X, המערכת תחפש בטבלת התעריפים את הרשומה עבור סוג העבודה שבה `start_date <= X` וגם (`end_date >= X` או `end_date` ריק).
-2. **חישוב יתרה לעובד:** `סך כל הרישומים הפעילים` פחות `סך כל התשלומים שבוצעו`.
-3. **המרה לעשרוני:** זמן בפורמט HH:mm יומר ל-Decimal (למשל 01:30 יהפוך ל-1.5) לצורך הכפלה בתעריף השעתי.
-
-## 4. חוויית משתמש (UX/UI)
-- שפה: עברית מלאה (RTL).
-- עיצוב: נקי, מודרני, צבעים בהירים (כחול עסקי, לבן, אפור בהיר).
-- רכיבים: שימוש ב-Modals להוספה ועריכה כדי לשמור על הקשר.
-- ניווט: תפריט צדדי קבוע (Sidebar).
+      a {
+        color: #004ac6;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>מעביר אותך למסך הראשי…</h1>
+      <p>
+        אם לא בוצעה העברה אוטומטית, אפשר להיכנס ישירות למסך הראשי כאן:
+        <a href="./stitch_smallbiz_pay/_3/code.html">SmallBiz Pay</a>
+      </p>
+    </main>
+  </body>
+</html>
