@@ -1,59 +1,322 @@
-# אפיון מערכת לניהול העסקת עובדים - SmallBiz Pay
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmallBiz Pay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300;400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand__logo">SB</div>
+          <div>
+            <h1>SmallBiz Pay</h1>
+            <p>ניהול עובדים, דיווחים ותשלומים</p>
+          </div>
+        </div>
 
-## 1. מבוא
-מערכת מקיפה לניהול עובדים, עבודות, תעריפים ותשלומים עבור עסקים קטנים. המערכת שמה דגש על חישוב אוטומטי של שכר על בסיס היסטוריית תעריפים ומעקב מדויק אחר יתרות.
+        <nav class="nav-menu" aria-label="ניווט ראשי">
+          <button class="nav-link is-active" data-route="dashboard">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span>לוח בקרה</span>
+          </button>
+          <button class="nav-link" data-route="employees">
+            <span class="material-symbols-outlined">group</span>
+            <span>עובדים</span>
+          </button>
+          <button class="nav-link" data-route="job-types">
+            <span class="material-symbols-outlined">work</span>
+            <span>סוגי עבודה</span>
+          </button>
+          <button class="nav-link" data-route="work-logs">
+            <span class="material-symbols-outlined">history_edu</span>
+            <span>יומני עבודה</span>
+          </button>
+          <button class="nav-link" data-route="payments">
+            <span class="material-symbols-outlined">payments</span>
+            <span>תשלומים</span>
+          </button>
+          <button class="nav-link" data-route="settings">
+            <span class="material-symbols-outlined">settings</span>
+            <span>הגדרות</span>
+          </button>
+        </nav>
 
-## 2. מודל נתונים (Database Schema)
+        <div class="sidebar__footer">
+          <button class="button button--primary button--block" data-open-modal="employee">
+            <span class="material-symbols-outlined">person_add</span>
+            <span>הוסף עובד</span>
+          </button>
+        </div>
+      </aside>
 
-### עובדים (Employees)
-- `id`: UUID (מפתח ראשי)
-- `name`: String (שם מלא)
-- `status`: Enum (פעיל, לא פעיל)
-- `notes`: Text (הערות)
-- `created_at`: Timestamp
+      <main class="content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="pageEyebrow">לוח בקרה</p>
+            <h2 id="pageTitle">מבט כללי על העסק</h2>
+          </div>
 
-### סוגי עבודה (JobTypes)
-- `id`: UUID (מפתח ראשי)
-- `name`: String (שם העבודה)
-- `payment_method`: Enum (לפי כמות, לפי שעות, תשלום קבוע)
-- `status`: Enum (פעיל, לא פעיל)
-- `notes`: Text
-- `created_at`: Timestamp
+          <div class="topbar__actions">
+            <label class="search-box">
+              <span class="material-symbols-outlined">search</span>
+              <input id="globalSearch" type="search" placeholder="חיפוש עובדים, הערות או מזהים" />
+            </label>
+            <button class="button button--secondary" id="refreshButton">
+              <span class="material-symbols-outlined">refresh</span>
+              <span>רענון</span>
+            </button>
+          </div>
+        </header>
 
-### תעריפים (Rates)
-- `id`: UUID
-- `job_type_id`: UUID (מפתח זר ל-JobTypes)
-- `amount`: Decimal (סכום התעריף)
-- `start_date`: Date (תאריך תחילה)
-- `end_date`: Date (תאריך סיום - אופציונלי)
+        <section class="view is-active" data-view="dashboard">
+          <div class="stats-grid" id="dashboardStats"></div>
 
-### רישומי עבודה (WorkLogs)
-- `id`: UUID
-- `date`: Date
-- `employee_id`: UUID (מפתח זר ל-Employees)
-- `job_type_id`: UUID (מפתח זר ל-JobTypes)
-- `quantity`: Decimal (לשימוש בשיטת "כמות")
-- `hours_minutes`: String (פורמט HH:mm לשימוש בשיטת "שעות")
-- `decimal_hours`: Decimal (חישוב אוטומטי לצורך שכר)
-- `applied_rate`: Decimal (התעריף שנשמר בזמן הרישום)
-- `total_amount`: Decimal (חישוב סופי: rate * quantity/hours)
-- `status`: Enum (פעיל, מבוטל)
-- `notes`: Text
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel__header">
+                <div>
+                  <h3>יתרות עובדים</h3>
+                  <p>העובדים עם היתרות הגבוהות ביותר כרגע</p>
+                </div>
+              </div>
+              <div id="balancesList" class="list"></div>
+            </section>
 
-### תשלומים (Payments)
-- `id`: UUID
-- `date`: Date
-- `employee_id`: UUID (מפתח זר ל-Employees)
-- `amount`: Decimal (סכום התשלום)
-- `notes`: Text
+            <section class="panel">
+              <div class="panel__header">
+                <div>
+                  <h3>פעולות מהירות</h3>
+                  <p>קיצורי דרך לפעולות היומיומיות</p>
+                </div>
+              </div>
+              <div class="quick-actions">
+                <button class="quick-action" data-open-modal="work-log">
+                  <span class="material-symbols-outlined">note_add</span>
+                  <strong>דיווח עבודה חדש</strong>
+                  <small>יוצר קריאה ל־api_create_work_log</small>
+                </button>
+                <button class="quick-action" data-open-modal="payment">
+                  <span class="material-symbols-outlined">payments</span>
+                  <strong>תשלום חדש</strong>
+                  <small>יוצר קריאה ל־create_payment</small>
+                </button>
+                <button class="quick-action" data-route-target="employees">
+                  <span class="material-symbols-outlined">group</span>
+                  <strong>ניהול עובדים</strong>
+                  <small>מעבר למסך העובדים</small>
+                </button>
+              </div>
+            </section>
+          </div>
+        </section>
 
-## 3. לוגיקה עסקית מרכזית
-1. **איתור תעריף תקף:** בעת יצירת רישום עבודה בתאריך X, המערכת תחפש בטבלת התעריפים את הרשומה עבור סוג העבודה שבה `start_date <= X` וגם (`end_date >= X` או `end_date` ריק).
-2. **חישוב יתרה לעובד:** `סך כל הרישומים הפעילים` פחות `סך כל התשלומים שבוצעו`.
-3. **המרה לעשרוני:** זמן בפורמט HH:mm יומר ל-Decimal (למשל 01:30 יהפוך ל-1.5) לצורך הכפלה בתעריף השעתי.
+        <section class="view" data-view="employees">
+          <div class="panel">
+            <div class="panel__header panel__header--stack-mobile">
+              <div>
+                <h3>רשימת עובדים</h3>
+                <p>שליפה מ־get_employees ועריכה דרך update_employee</p>
+              </div>
+              <div class="toolbar">
+                <button class="button button--secondary" id="reloadEmployees">
+                  <span class="material-symbols-outlined">sync</span>
+                  <span>טען מחדש</span>
+                </button>
+                <button class="button button--primary" data-open-modal="employee">
+                  <span class="material-symbols-outlined">add</span>
+                  <span>עובד חדש</span>
+                </button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>שם</th>
+                    <th>טלפון</th>
+                    <th>תפקיד</th>
+                    <th>סטטוס</th>
+                    <th>פעולות</th>
+                  </tr>
+                </thead>
+                <tbody id="employeesTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
-## 4. חוויית משתמש (UX/UI)
-- שפה: עברית מלאה (RTL).
-- עיצוב: נקי, מודרני, צבעים בהירים (כחול עסקי, לבן, אפור בהיר).
-- רכיבים: שימוש ב-Modals להוספה ועריכה כדי לשמור על הקשר.
-- ניווט: תפריט צדדי קבוע (Sidebar).
+        <section class="view" data-view="job-types">
+          <div class="panel empty-state">
+            <span class="material-symbols-outlined">info</span>
+            <h3>חסר API עבור סוגי עבודה ותעריפים</h3>
+            <p>
+              כרגע ברשימת ה־RPC שקיבלתי אין פונקציות לניהול סוגי עבודה או תעריפים.
+              המסך מוכן, אבל כדי להפעיל אותו צריך להוסיף RPCים מתאימים.
+            </p>
+          </div>
+        </section>
+
+        <section class="view" data-view="work-logs">
+          <div class="panel">
+            <div class="panel__header panel__header--stack-mobile">
+              <div>
+                <h3>יומני עבודה</h3>
+                <p>שליפה מ־get_work_logs, עריכה דרך update_work_log ומחיקה דרך delete_work_log</p>
+              </div>
+              <div class="toolbar">
+                <label class="field field--compact">
+                  <span>מתאריך</span>
+                  <input type="date" id="workLogsFrom" />
+                </label>
+                <label class="field field--compact">
+                  <span>עד תאריך</span>
+                  <input type="date" id="workLogsTo" />
+                </label>
+                <button class="button button--secondary" id="loadWorkLogs">
+                  <span class="material-symbols-outlined">filter_alt</span>
+                  <span>טען</span>
+                </button>
+                <button class="button button--primary" data-open-modal="work-log">
+                  <span class="material-symbols-outlined">add</span>
+                  <span>דיווח חדש</span>
+                </button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>תאריך</th>
+                    <th>עובד</th>
+                    <th>כמות</th>
+                    <th>שעות</th>
+                    <th>הערות</th>
+                    <th>סטטוס</th>
+                    <th>פעולות</th>
+                  </tr>
+                </thead>
+                <tbody id="workLogsTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" data-view="payments">
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel__header panel__header--stack-mobile">
+                <div>
+                  <h3>תשלומים</h3>
+                  <p>בחירת עובד וטעינת get_payments</p>
+                </div>
+                <div class="toolbar">
+                  <label class="field field--compact">
+                    <span>עובד</span>
+                    <select id="paymentsEmployeeFilter"></select>
+                  </label>
+                  <button class="button button--secondary" id="loadPayments">
+                    <span class="material-symbols-outlined">payments</span>
+                    <span>טען תשלומים</span>
+                  </button>
+                  <button class="button button--primary" data-open-modal="payment">
+                    <span class="material-symbols-outlined">add</span>
+                    <span>תשלום חדש</span>
+                  </button>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>תאריך</th>
+                      <th>סכום</th>
+                      <th>הערות</th>
+                    </tr>
+                  </thead>
+                  <tbody id="paymentsTable"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel__header">
+                <div>
+                  <h3>יתרת עובד</h3>
+                  <p>שליפה ישירה מ־get_employee_balance</p>
+                </div>
+              </div>
+              <div id="employeeBalanceCard" class="balance-card"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" data-view="settings">
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel__header">
+                <div>
+                  <h3>חיבור Supabase</h3>
+                  <p>סטטוס החיבור והגדרות הפרויקט</p>
+                </div>
+              </div>
+              <dl class="meta-list">
+                <div>
+                  <dt>Project URL</dt>
+                  <dd id="settingsProjectUrl">-</dd>
+                </div>
+                <div>
+                  <dt>Anon Key</dt>
+                  <dd id="settingsAnonKey">-</dd>
+                </div>
+                <div>
+                  <dt>מצב חיבור</dt>
+                  <dd id="connectionState">טוען...</dd>
+                </div>
+              </dl>
+            </section>
+
+            <section class="panel">
+              <div class="panel__header">
+                <div>
+                  <h3>פונקציות API מחוברות</h3>
+                  <p>אלה הפונקציות שכבר חוברו מתוך ה־UI</p>
+                </div>
+              </div>
+              <ul class="rpc-list" id="rpcList"></ul>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <dialog class="modal" id="modal">
+      <form method="dialog" class="modal__content" id="modalForm">
+        <div class="modal__header">
+          <div>
+            <p class="eyebrow" id="modalEyebrow">טופס</p>
+            <h3 id="modalTitle">פרטים</h3>
+          </div>
+          <button class="icon-button" value="cancel" type="submit">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="modal__body" id="modalBody"></div>
+        <div class="modal__footer">
+          <button class="button button--secondary" value="cancel" type="submit">ביטול</button>
+          <button class="button button--primary" id="modalSubmit" type="button">שמור</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
