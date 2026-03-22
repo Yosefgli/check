@@ -9,16 +9,28 @@ const routes = {
   settings: { title: 'הגדרות וחיבורי מערכת', eyebrow: 'הגדרות' },
 };
 
+const paymentMethodLabels = {
+  quantity: 'לפי כמות',
+  hourly: 'לפי שעות',
+  fixed: 'תשלום קבוע',
+  hours: 'לפי שעות',
+};
+
 const state = {
   route: 'dashboard',
   api: null,
   employees: [],
+  jobTypes: [],
+  rates: [],
   workLogs: [],
   payments: [],
   balances: [],
   dashboard: null,
   selectedEmployeeId: '',
+  selectedJobTypeId: '',
   editingEmployeeId: null,
+  editingJobTypeId: null,
+  editingRateId: null,
   editingWorkLogId: null,
   connectionState: 'מתחבר...',
   query: '',
@@ -30,6 +42,9 @@ const el = {
   dashboardStats: document.getElementById('dashboardStats'),
   balancesList: document.getElementById('balancesList'),
   employeesTable: document.getElementById('employeesTable'),
+  jobTypesTable: document.getElementById('jobTypesTable'),
+  ratesJobTypeFilter: document.getElementById('ratesJobTypeFilter'),
+  ratesTable: document.getElementById('ratesTable'),
   workLogsTable: document.getElementById('workLogsTable'),
   paymentsTable: document.getElementById('paymentsTable'),
   paymentsEmployeeFilter: document.getElementById('paymentsEmployeeFilter'),
@@ -51,22 +66,31 @@ const el = {
 
 const rpcNames = [
   'get_dashboard_summary',
+  'get_dashboard_summary_by_range',
   'get_employees',
+  'get_employee_details',
   'create_employee',
   'update_employee',
+  'get_job_types',
+  'create_job_type',
+  'update_job_type',
+  'delete_job_type',
+  'get_rates',
+  'create_rate',
+  'update_rate',
+  'close_rate',
+  'delete_rate',
   'get_work_logs',
+  'get_work_logs_by_employee',
   'api_create_work_log',
   'update_work_log',
   'delete_work_log',
   'create_payment',
   'get_payments',
+  'get_payments_by_range',
   'get_employee_balance',
   'get_employees_balances',
 ];
-
-function qs(selector, scope = document) {
-  return scope.querySelector(selector);
-}
 
 function qsa(selector, scope = document) {
   return Array.from(scope.querySelectorAll(selector));
@@ -93,9 +117,14 @@ function statusBadge(status) {
     inactive: ['לא פעיל', 'badge badge--neutral'],
     cancelled: ['מבוטל', 'badge badge--danger'],
     deleted: ['נמחק', 'badge badge--danger'],
+    closed: ['סגור', 'badge badge--warning'],
   };
   const [label, className] = map[normalized] || [status || '-', 'badge badge--warning'];
   return `<span class="${className}">${escapeHtml(label)}</span>`;
+}
+
+function paymentMethodLabel(method) {
+  return paymentMethodLabels[String(method ?? '').toLowerCase()] || method || '-';
 }
 
 function showToast(message, isError = false) {
@@ -110,9 +139,18 @@ function withFallback(value, fallback = '-') {
   return value === null || value === undefined || value === '' ? fallback : value;
 }
 
+function normalizeRows(data) {
+  return Array.isArray(data) ? data : data ? [data] : [];
+}
+
 function getEmployeeName(id) {
   const employee = state.employees.find((item) => item.id === id);
   return employee?.name || id || 'ללא עובד';
+}
+
+function getJobTypeName(id) {
+  const item = state.jobTypes.find((jobType) => jobType.id === id);
+  return item?.name || id || 'ללא סוג עבודה';
 }
 
 function filteredItems(items, fields) {
@@ -133,6 +171,9 @@ function setRoute(route) {
 
   if (route === 'payments' && state.selectedEmployeeId) {
     loadPaymentsAndBalance(state.selectedEmployeeId);
+  }
+  if (route === 'job-types' && state.selectedJobTypeId) {
+    loadRates(state.selectedJobTypeId);
   }
 }
 
@@ -205,6 +246,62 @@ function renderEmployees() {
     : '<tr><td colspan="5">לא נמצאו עובדים.</td></tr>';
 }
 
+function renderJobTypes() {
+  const jobTypes = filteredItems(state.jobTypes, ['name', 'payment_method', 'status', 'notes']);
+  el.jobTypesTable.innerHTML = jobTypes.length
+    ? jobTypes
+        .map(
+          (jobType) => `
+            <tr>
+              <td><strong>${escapeHtml(jobType.name)}</strong><div class="text-muted">${escapeHtml(jobType.id || '')}</div></td>
+              <td>${escapeHtml(paymentMethodLabel(jobType.payment_method))}</td>
+              <td>${statusBadge(jobType.status)}</td>
+              <td>${escapeHtml(withFallback(jobType.notes))}</td>
+              <td>
+                <div class="actions-inline">
+                  <button class="button button--secondary js-edit-job-type" data-id="${escapeHtml(jobType.id)}">ערוך</button>
+                  <button class="button button--secondary js-show-rates" data-id="${escapeHtml(jobType.id)}">תעריפים</button>
+                  <button class="button button--secondary js-delete-job-type" data-id="${escapeHtml(jobType.id)}">מחק</button>
+                </div>
+              </td>
+            </tr>
+          `,
+        )
+        .join('')
+    : '<tr><td colspan="5">לא נמצאו סוגי עבודה.</td></tr>';
+}
+
+function renderRatesFilter() {
+  const options = state.jobTypes
+    .map((jobType) => `<option value="${escapeHtml(jobType.id)}">${escapeHtml(jobType.name)}</option>`)
+    .join('');
+  el.ratesJobTypeFilter.innerHTML = `<option value="">בחר סוג עבודה</option>${options}`;
+  if (state.selectedJobTypeId) el.ratesJobTypeFilter.value = state.selectedJobTypeId;
+}
+
+function renderRates() {
+  el.ratesTable.innerHTML = state.rates.length
+    ? state.rates
+        .map(
+          (rate) => `
+            <tr>
+              <td><strong>${escapeHtml(formatCurrency(rate.amount))}</strong></td>
+              <td>${escapeHtml(withFallback(rate.start_date))}</td>
+              <td>${escapeHtml(withFallback(rate.end_date, 'ללא סיום'))}</td>
+              <td>
+                <div class="actions-inline">
+                  <button class="button button--secondary js-edit-rate" data-id="${escapeHtml(rate.id)}">ערוך</button>
+                  <button class="button button--secondary js-close-rate" data-id="${escapeHtml(rate.id)}">סגור</button>
+                  <button class="button button--secondary js-delete-rate" data-id="${escapeHtml(rate.id)}">מחק</button>
+                </div>
+              </td>
+            </tr>
+          `,
+        )
+        .join('')
+    : '<tr><td colspan="4">בחר סוג עבודה כדי לטעון תעריפים.</td></tr>';
+}
+
 function renderWorkLogs() {
   const logs = filteredItems(state.workLogs, ['notes', 'status', 'employee_id', 'date']);
   el.workLogsTable.innerHTML = logs.length
@@ -265,6 +362,9 @@ function renderSettings() {
 function renderAll() {
   renderDashboard();
   renderEmployees();
+  renderJobTypes();
+  renderRatesFilter();
+  renderRates();
   renderWorkLogs();
   renderPayments();
   renderPaymentsFilter();
@@ -293,9 +393,64 @@ function employeeFields(employee = {}) {
     <label class="field">
       <span>סטטוס</span>
       <select name="status">
-        <option value="active" ${employee.status === 'active' ? 'selected' : ''}>active</option>
+        <option value="active" ${(employee.status || 'active') === 'active' ? 'selected' : ''}>active</option>
         <option value="inactive" ${employee.status === 'inactive' ? 'selected' : ''}>inactive</option>
       </select>
+    </label>
+  `;
+}
+
+function jobTypeFields(jobType = {}) {
+  return `
+    <label class="field">
+      <span>שם</span>
+      <input name="name" value="${escapeHtml(jobType.name || '')}" required />
+    </label>
+    <label class="field">
+      <span>שיטת תשלום</span>
+      <select name="paymentMethod">
+        <option value="quantity" ${(jobType.payment_method || '') === 'quantity' ? 'selected' : ''}>quantity</option>
+        <option value="hourly" ${(jobType.payment_method || '') === 'hourly' ? 'selected' : ''}>hourly</option>
+        <option value="fixed" ${(jobType.payment_method || '') === 'fixed' ? 'selected' : ''}>fixed</option>
+      </select>
+    </label>
+    <label class="field">
+      <span>סטטוס</span>
+      <select name="status">
+        <option value="active" ${(jobType.status || 'active') === 'active' ? 'selected' : ''}>active</option>
+        <option value="inactive" ${jobType.status === 'inactive' ? 'selected' : ''}>inactive</option>
+      </select>
+    </label>
+    <label class="field field--full">
+      <span>הערות</span>
+      <textarea name="notes">${escapeHtml(jobType.notes || '')}</textarea>
+    </label>
+  `;
+}
+
+function rateFields(rate = {}) {
+  const options = state.jobTypes
+    .map((jobType) => `<option value="${escapeHtml(jobType.id)}" ${jobType.id === (rate.job_type_id || state.selectedJobTypeId) ? 'selected' : ''}>${escapeHtml(jobType.name)}</option>`)
+    .join('');
+  return `
+    <label class="field">
+      <span>סוג עבודה</span>
+      <select name="jobTypeId" ${rate.id ? 'disabled' : ''} required>
+        <option value="">בחר סוג עבודה</option>
+        ${options}
+      </select>
+    </label>
+    <label class="field">
+      <span>סכום</span>
+      <input type="number" step="0.01" name="amount" value="${escapeHtml(rate.amount ?? '')}" required />
+    </label>
+    <label class="field">
+      <span>מתאריך</span>
+      <input type="date" name="startDate" value="${escapeHtml(rate.start_date || today())}" ${rate.id ? 'disabled' : ''} required />
+    </label>
+    <label class="field">
+      <span>עד תאריך</span>
+      <input type="date" name="endDate" value="${escapeHtml(rate.end_date || '')}" />
     </label>
   `;
 }
@@ -303,6 +458,9 @@ function employeeFields(employee = {}) {
 function workLogFields(log = {}) {
   const employeeOptions = state.employees
     .map((employee) => `<option value="${escapeHtml(employee.id)}" ${employee.id === log.employee_id ? 'selected' : ''}>${escapeHtml(employee.name)}</option>`)
+    .join('');
+  const jobTypeOptions = state.jobTypes
+    .map((jobType) => `<option value="${escapeHtml(jobType.id)}" ${jobType.id === log.job_type_id ? 'selected' : ''}>${escapeHtml(jobType.name)}</option>`)
     .join('');
   return `
     <label class="field">
@@ -313,8 +471,11 @@ function workLogFields(log = {}) {
       </select>
     </label>
     <label class="field">
-      <span>Job Type UUID</span>
-      <input name="jobTypeId" value="${escapeHtml(log.job_type_id || '')}" ${log.id ? 'disabled' : ''} required />
+      <span>סוג עבודה</span>
+      <select name="jobTypeId" ${log.id ? 'disabled' : ''} required>
+        <option value="">בחר סוג עבודה</option>
+        ${jobTypeOptions}
+      </select>
     </label>
     <label class="field">
       <span>תאריך</span>
@@ -371,6 +532,8 @@ function paymentFields() {
 
 function openModal(kind, payload = null) {
   state.editingEmployeeId = null;
+  state.editingJobTypeId = null;
+  state.editingRateId = null;
   state.editingWorkLogId = null;
 
   if (kind === 'employee') {
@@ -380,6 +543,24 @@ function openModal(kind, payload = null) {
     el.modalTitle.textContent = employee.id ? 'עדכון פרטי עובד' : 'יצירת עובד חדש';
     el.modalBody.innerHTML = employeeFields(employee);
     el.modalSubmit.onclick = submitEmployee;
+  }
+
+  if (kind === 'job-type') {
+    const jobType = payload || {};
+    state.editingJobTypeId = jobType.id || null;
+    el.modalEyebrow.textContent = jobType.id ? 'עריכת סוג עבודה' : 'סוג עבודה חדש';
+    el.modalTitle.textContent = jobType.id ? 'עדכון סוג עבודה' : 'יצירת סוג עבודה';
+    el.modalBody.innerHTML = jobTypeFields(jobType);
+    el.modalSubmit.onclick = submitJobType;
+  }
+
+  if (kind === 'rate') {
+    const rate = payload || {};
+    state.editingRateId = rate.id || null;
+    el.modalEyebrow.textContent = rate.id ? 'עריכת תעריף' : 'תעריף חדש';
+    el.modalTitle.textContent = rate.id ? 'עדכון תעריף' : 'יצירת תעריף';
+    el.modalBody.innerHTML = rateFields(rate);
+    el.modalSubmit.onclick = submitRate;
   }
 
   if (kind === 'work-log') {
@@ -419,6 +600,62 @@ async function submitEmployee() {
     }
     el.modal.close();
     await loadEmployees();
+  } catch (error) {
+    showToast(error.message, true);
+  }
+}
+
+async function submitJobType() {
+  const values = collectFormData();
+  try {
+    if (state.editingJobTypeId) {
+      await state.api.updateJobType({
+        id: state.editingJobTypeId,
+        name: values.name,
+        paymentMethod: values.paymentMethod,
+        status: values.status,
+        notes: values.notes,
+      });
+      showToast('סוג העבודה עודכן בהצלחה');
+    } else {
+      await state.api.createJobType({
+        name: values.name,
+        paymentMethod: values.paymentMethod,
+        status: values.status,
+        notes: values.notes,
+      });
+      showToast('סוג העבודה נוצר בהצלחה');
+    }
+    el.modal.close();
+    await loadJobTypes();
+  } catch (error) {
+    showToast(error.message, true);
+  }
+}
+
+async function submitRate() {
+  const values = collectFormData();
+  try {
+    if (state.editingRateId) {
+      const currentRate = state.rates.find((item) => item.id === state.editingRateId) || {};
+      await state.api.updateRate({
+        id: state.editingRateId,
+        amount: Number(values.amount),
+        startDate: currentRate.start_date || today(),
+        endDate: values.endDate || null,
+      });
+      showToast('התעריף עודכן בהצלחה');
+    } else {
+      await state.api.createRate({
+        jobTypeId: values.jobTypeId,
+        amount: Number(values.amount),
+        startDate: values.startDate,
+        endDate: values.endDate || null,
+      });
+      showToast('התעריף נוצר בהצלחה');
+    }
+    el.modal.close();
+    await loadRates(state.selectedJobTypeId || values.jobTypeId);
   } catch (error) {
     showToast(error.message, true);
   }
@@ -472,10 +709,6 @@ async function submitPayment() {
   }
 }
 
-function normalizeRows(data) {
-  return Array.isArray(data) ? data : data ? [data] : [];
-}
-
 async function loadDashboard() {
   try {
     const result = await state.api.getDashboardSummary();
@@ -488,14 +721,41 @@ async function loadDashboard() {
 async function loadEmployees() {
   try {
     state.employees = normalizeRows(await state.api.getEmployees());
-    if (!state.selectedEmployeeId && state.employees[0]?.id) {
-      state.selectedEmployeeId = state.employees[0].id;
-    }
+    if (!state.selectedEmployeeId && state.employees[0]?.id) state.selectedEmployeeId = state.employees[0].id;
     renderPaymentsFilter();
   } catch (error) {
     showToast(`לא ניתן לטעון עובדים: ${error.message}`, true);
   }
   renderEmployees();
+}
+
+async function loadJobTypes() {
+  try {
+    state.jobTypes = normalizeRows(await state.api.getJobTypes());
+    if (!state.selectedJobTypeId && state.jobTypes[0]?.id) state.selectedJobTypeId = state.jobTypes[0].id;
+    renderRatesFilter();
+    if (state.selectedJobTypeId) await loadRates(state.selectedJobTypeId);
+  } catch (error) {
+    showToast(`לא ניתן לטעון סוגי עבודה: ${error.message}`, true);
+  }
+  renderJobTypes();
+}
+
+async function loadRates(jobTypeId) {
+  if (!jobTypeId) {
+    state.rates = [];
+    renderRates();
+    return;
+  }
+
+  try {
+    state.selectedJobTypeId = jobTypeId;
+    state.rates = normalizeRows(await state.api.getRates({ jobTypeId }));
+  } catch (error) {
+    showToast(`לא ניתן לטעון תעריפים: ${error.message}`, true);
+  }
+  renderRatesFilter();
+  renderRates();
 }
 
 async function loadBalances() {
@@ -545,7 +805,7 @@ async function loadPaymentsAndBalance(employeeId) {
 }
 
 async function refreshAll() {
-  await Promise.all([loadDashboard(), loadEmployees(), loadBalances()]);
+  await Promise.all([loadDashboard(), loadEmployees(), loadJobTypes(), loadBalances()]);
   await loadWorkLogs();
   await loadPaymentsAndBalance(state.selectedEmployeeId);
   renderAll();
@@ -568,6 +828,68 @@ async function handleTableActions(event) {
     return;
   }
 
+  const editJobType = event.target.closest('.js-edit-job-type');
+  if (editJobType) {
+    const jobType = state.jobTypes.find((item) => item.id === editJobType.dataset.id);
+    openModal('job-type', jobType);
+    return;
+  }
+
+  const showRates = event.target.closest('.js-show-rates');
+  if (showRates) {
+    state.selectedJobTypeId = showRates.dataset.id;
+    renderRatesFilter();
+    await loadRates(showRates.dataset.id);
+    return;
+  }
+
+  const deleteJobType = event.target.closest('.js-delete-job-type');
+  if (deleteJobType) {
+    if (!window.confirm('למחוק את סוג העבודה הזה?')) return;
+    try {
+      await state.api.deleteJobType({ id: deleteJobType.dataset.id });
+      showToast('סוג העבודה נמחק בהצלחה');
+      await loadJobTypes();
+    } catch (error) {
+      showToast(error.message, true);
+    }
+    return;
+  }
+
+  const editRate = event.target.closest('.js-edit-rate');
+  if (editRate) {
+    const rate = state.rates.find((item) => item.id === editRate.dataset.id);
+    openModal('rate', rate);
+    return;
+  }
+
+  const closeRate = event.target.closest('.js-close-rate');
+  if (closeRate) {
+    const endDate = window.prompt('תאריך סיום (YYYY-MM-DD):', today());
+    if (!endDate) return;
+    try {
+      await state.api.closeRate({ id: closeRate.dataset.id, endDate });
+      showToast('התעריף נסגר בהצלחה');
+      await loadRates(state.selectedJobTypeId);
+    } catch (error) {
+      showToast(error.message, true);
+    }
+    return;
+  }
+
+  const deleteRate = event.target.closest('.js-delete-rate');
+  if (deleteRate) {
+    if (!window.confirm('למחוק את התעריף הזה? לא מומלץ בפרודקשן.')) return;
+    try {
+      await state.api.deleteRate({ id: deleteRate.dataset.id });
+      showToast('התעריף נמחק בהצלחה');
+      await loadRates(state.selectedJobTypeId);
+    } catch (error) {
+      showToast(error.message, true);
+    }
+    return;
+  }
+
   const editLog = event.target.closest('.js-edit-log');
   if (editLog) {
     const log = state.workLogs.find((item) => item.id === editLog.dataset.id);
@@ -577,8 +899,7 @@ async function handleTableActions(event) {
 
   const deleteLog = event.target.closest('.js-delete-log');
   if (deleteLog) {
-    const confirmed = window.confirm('למחוק את הדיווח הזה?');
-    if (!confirmed) return;
+    if (!window.confirm('למחוק את הדיווח הזה?')) return;
     try {
       await state.api.deleteWorkLog({ id: deleteLog.dataset.id });
       showToast('הדיווח נמחק בהצלחה');
@@ -600,21 +921,16 @@ function firstDayOfMonth() {
 }
 
 function attachEvents() {
-  qsa('[data-route]').forEach((button) => {
-    button.addEventListener('click', () => setRoute(button.dataset.route));
-  });
-
-  qsa('[data-open-modal]').forEach((button) => {
-    button.addEventListener('click', () => openModal(button.dataset.openModal));
-  });
-
-  qsa('[data-route-target]').forEach((button) => {
-    button.addEventListener('click', () => setRoute(button.dataset.routeTarget));
-  });
+  qsa('[data-route]').forEach((button) => button.addEventListener('click', () => setRoute(button.dataset.route)));
+  qsa('[data-open-modal]').forEach((button) => button.addEventListener('click', () => openModal(button.dataset.openModal)));
+  qsa('[data-route-target]').forEach((button) => button.addEventListener('click', () => setRoute(button.dataset.routeTarget)));
 
   document.body.addEventListener('click', handleTableActions);
   document.getElementById('refreshButton').addEventListener('click', refreshAll);
   document.getElementById('reloadEmployees').addEventListener('click', loadEmployees);
+  document.getElementById('reloadJobTypes').addEventListener('click', loadJobTypes);
+  document.getElementById('loadRates').addEventListener('click', () => loadRates(el.ratesJobTypeFilter.value));
+  el.ratesJobTypeFilter.addEventListener('change', () => loadRates(el.ratesJobTypeFilter.value));
   document.getElementById('loadWorkLogs').addEventListener('click', loadWorkLogs);
   document.getElementById('loadPayments').addEventListener('click', () => loadPaymentsAndBalance(el.paymentsEmployeeFilter.value));
   el.paymentsEmployeeFilter.addEventListener('change', () => loadPaymentsAndBalance(el.paymentsEmployeeFilter.value));

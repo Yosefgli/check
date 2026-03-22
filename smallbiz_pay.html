@@ -48,10 +48,14 @@
           </button>
         </nav>
 
-        <div class="sidebar__footer">
+        <div class="sidebar__footer sidebar__footer--stack">
           <button class="button button--primary button--block" data-open-modal="employee">
             <span class="material-symbols-outlined">person_add</span>
             <span>הוסף עובד</span>
+          </button>
+          <button class="button button--secondary button--block" data-open-modal="job-type">
+            <span class="material-symbols-outlined">work_update</span>
+            <span>הוסף סוג עבודה</span>
           </button>
         </div>
       </aside>
@@ -107,10 +111,10 @@
                   <strong>תשלום חדש</strong>
                   <small>יוצר קריאה ל־create_payment</small>
                 </button>
-                <button class="quick-action" data-route-target="employees">
-                  <span class="material-symbols-outlined">group</span>
-                  <strong>ניהול עובדים</strong>
-                  <small>מעבר למסך העובדים</small>
+                <button class="quick-action" data-route-target="job-types">
+                  <span class="material-symbols-outlined">work_history</span>
+                  <strong>ניהול תעריפים</strong>
+                  <small>מעבר למסך סוגי עבודה ותעריפים</small>
                 </button>
               </div>
             </section>
@@ -153,13 +157,75 @@
         </section>
 
         <section class="view" data-view="job-types">
-          <div class="panel empty-state">
-            <span class="material-symbols-outlined">info</span>
-            <h3>חסר API עבור סוגי עבודה ותעריפים</h3>
-            <p>
-              כרגע ברשימת ה־RPC שקיבלתי אין פונקציות לניהול סוגי עבודה או תעריפים.
-              המסך מוכן, אבל כדי להפעיל אותו צריך להוסיף RPCים מתאימים.
-            </p>
+          <div class="panel-grid">
+            <section class="panel">
+              <div class="panel__header panel__header--stack-mobile">
+                <div>
+                  <h3>סוגי עבודה</h3>
+                  <p>שליפה מ־get_job_types, עריכה דרך update_job_type ומחיקה רכה דרך delete_job_type</p>
+                </div>
+                <div class="toolbar">
+                  <button class="button button--secondary" id="reloadJobTypes">
+                    <span class="material-symbols-outlined">sync</span>
+                    <span>טען מחדש</span>
+                  </button>
+                  <button class="button button--primary" data-open-modal="job-type">
+                    <span class="material-symbols-outlined">add</span>
+                    <span>סוג עבודה חדש</span>
+                  </button>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>שם</th>
+                      <th>שיטת תשלום</th>
+                      <th>סטטוס</th>
+                      <th>הערות</th>
+                      <th>פעולות</th>
+                    </tr>
+                  </thead>
+                  <tbody id="jobTypesTable"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel__header panel__header--stack-mobile">
+                <div>
+                  <h3>תעריפים</h3>
+                  <p>בחירת סוג עבודה, טעינת get_rates ופעולות create/update/close</p>
+                </div>
+                <div class="toolbar">
+                  <label class="field field--compact">
+                    <span>סוג עבודה</span>
+                    <select id="ratesJobTypeFilter"></select>
+                  </label>
+                  <button class="button button--secondary" id="loadRates">
+                    <span class="material-symbols-outlined">tune</span>
+                    <span>טען תעריפים</span>
+                  </button>
+                  <button class="button button--primary" data-open-modal="rate">
+                    <span class="material-symbols-outlined">add</span>
+                    <span>תעריף חדש</span>
+                  </button>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>סכום</th>
+                      <th>מתאריך</th>
+                      <th>עד תאריך</th>
+                      <th>פעולות</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ratesTable"></tbody>
+                </table>
+              </div>
+            </section>
           </div>
         </section>
 

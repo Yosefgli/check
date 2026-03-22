@@ -25,6 +25,10 @@ function assertNumberOrNull(value, fieldName) {
   assert(value === null || value === undefined || typeof value === 'number', `${fieldName} must be a number or null`);
 }
 
+function assertNumber(value, fieldName) {
+  assert(typeof value === 'number' && Number.isFinite(value), `${fieldName} must be a valid number`);
+}
+
 function normalizeRpcResult(functionName, response) {
   if (response.error) {
     throw new Error(`Supabase RPC ${functionName} failed: ${response.error.message}`);
@@ -61,8 +65,19 @@ export async function createSmallBizPayApi(customClient) {
       return rpc('get_dashboard_summary');
     },
 
+    getDashboardSummaryByRange({ from, to }) {
+      assertDate(from, 'from');
+      assertDate(to, 'to');
+      return rpc('get_dashboard_summary_by_range', { p_from: from, p_to: to });
+    },
+
     getEmployees() {
       return rpc('get_employees');
+    },
+
+    getEmployeeDetails({ employeeId }) {
+      assertUuid(employeeId, 'employeeId');
+      return rpc('get_employee_details', { p_employee: employeeId });
     },
 
     createEmployee({ name, phone, role }) {
@@ -93,6 +108,89 @@ export async function createSmallBizPayApi(customClient) {
       });
     },
 
+    getJobTypes() {
+      return rpc('get_job_types');
+    },
+
+    createJobType({ name, paymentMethod, status, notes = '' }) {
+      assert(typeof name === 'string' && name.trim(), 'name is required');
+      assert(typeof paymentMethod === 'string' && paymentMethod.trim(), 'paymentMethod is required');
+      assert(typeof status === 'string' && status.trim(), 'status is required');
+      assert(typeof notes === 'string', 'notes must be a string');
+
+      return rpc('create_job_type', {
+        p_name: name.trim(),
+        p_payment_method: paymentMethod.trim(),
+        p_status: status.trim(),
+        p_notes: notes,
+      });
+    },
+
+    updateJobType({ id, name, paymentMethod, status, notes = '' }) {
+      assertUuid(id, 'id');
+      assert(typeof name === 'string' && name.trim(), 'name is required');
+      assert(typeof paymentMethod === 'string' && paymentMethod.trim(), 'paymentMethod is required');
+      assert(typeof status === 'string' && status.trim(), 'status is required');
+      assert(typeof notes === 'string', 'notes must be a string');
+
+      return rpc('update_job_type', {
+        p_id: id,
+        p_name: name.trim(),
+        p_payment_method: paymentMethod.trim(),
+        p_status: status.trim(),
+        p_notes: notes,
+      });
+    },
+
+    deleteJobType({ id }) {
+      assertUuid(id, 'id');
+      return rpc('delete_job_type', { p_id: id });
+    },
+
+    getRates({ jobTypeId }) {
+      assertUuid(jobTypeId, 'jobTypeId');
+      return rpc('get_rates', { p_job_type: jobTypeId });
+    },
+
+    createRate({ jobTypeId, amount, startDate, endDate = null }) {
+      assertUuid(jobTypeId, 'jobTypeId');
+      assertNumber(amount, 'amount');
+      assertDate(startDate, 'startDate');
+      if (endDate) assertDate(endDate, 'endDate');
+
+      return rpc('create_rate', {
+        p_job_type: jobTypeId,
+        p_amount: amount,
+        p_start_date: startDate,
+        p_end_date: endDate,
+      });
+    },
+
+    updateRate({ id, amount, startDate, endDate = null }) {
+      assertUuid(id, 'id');
+      assertNumber(amount, 'amount');
+      assertDate(startDate, 'startDate');
+      if (endDate) assertDate(endDate, 'endDate');
+
+      return rpc('update_rate', {
+        p_id: id,
+        p_amount: amount,
+        p_start_date: startDate,
+        p_end_date: endDate,
+      });
+    },
+
+    closeRate({ id, endDate }) {
+      assertUuid(id, 'id');
+      assertDate(endDate, 'endDate');
+      return rpc('close_rate', { p_id: id, p_end_date: endDate });
+    },
+
+    deleteRate({ id }) {
+      assertUuid(id, 'id');
+      return rpc('delete_rate', { p_id: id });
+    },
+
     getWorkLogs({ from, to }) {
       assertDate(from, 'from');
       assertDate(to, 'to');
@@ -101,6 +199,11 @@ export async function createSmallBizPayApi(customClient) {
         p_from: from,
         p_to: to,
       });
+    },
+
+    getWorkLogsByEmployee({ employeeId }) {
+      assertUuid(employeeId, 'employeeId');
+      return rpc('get_work_logs_by_employee', { p_employee: employeeId });
     },
 
     createWorkLog({ employeeId, jobTypeId, date, quantity = null, hours = null, notes = '' }) {
@@ -139,15 +242,12 @@ export async function createSmallBizPayApi(customClient) {
 
     deleteWorkLog({ id }) {
       assertUuid(id, 'id');
-
-      return rpc('delete_work_log', {
-        p_id: id,
-      });
+      return rpc('delete_work_log', { p_id: id });
     },
 
     createPayment({ employeeId, amount, date, notes = '' }) {
       assertUuid(employeeId, 'employeeId');
-      assert(typeof amount === 'number', 'amount must be a number');
+      assertNumber(amount, 'amount');
       assertDate(date, 'date');
       assert(typeof notes === 'string', 'notes must be a string');
 
@@ -161,18 +261,18 @@ export async function createSmallBizPayApi(customClient) {
 
     getPayments({ employeeId }) {
       assertUuid(employeeId, 'employeeId');
+      return rpc('get_payments', { p_employee: employeeId });
+    },
 
-      return rpc('get_payments', {
-        p_employee: employeeId,
-      });
+    getPaymentsByRange({ from, to }) {
+      assertDate(from, 'from');
+      assertDate(to, 'to');
+      return rpc('get_payments_by_range', { p_from: from, p_to: to });
     },
 
     getEmployeeBalance({ employeeId }) {
       assertUuid(employeeId, 'employeeId');
-
-      return rpc('get_employee_balance', {
-        p_employee: employeeId,
-      });
+      return rpc('get_employee_balance', { p_employee: employeeId });
     },
 
     getEmployeesBalances() {

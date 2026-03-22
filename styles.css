@@ -76,6 +76,7 @@ button { cursor: pointer; }
   box-shadow: var(--shadow);
 }
 .sidebar__footer { margin-top: auto; }
+.sidebar__footer--stack { display: grid; gap: 10px; }
 
 .content {
   padding: 24px;
